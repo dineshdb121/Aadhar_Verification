@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhar Verification</title>
+    <link rel="icon" type="image/x-icon" href="./images/aadhar_logo.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <nav class="navbar bg-body-tertiary shadow-sm border-bottom">
+        <div class="container justify-content-center">
+            <a class="navbar-brand" href="#">
+                <img src="./images/aadhar_logo.jpg" alt="Logo" width="30" height="24"
+                    class="d-inline-block align-text-top fw-bold">
+                Aadhar Verification
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- enter your aadhar no -->
+        <div class="card col-md-5 mx-auto my-3 shadow-sm" id="enter_aadhar">
+            <div class="card-body">
+                <h5 class="my-3 text-center">Enter Your Aadhar Card No</h5>
+                <div class="input-group ">
+                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-fingerprint"></i></span>
+                    <input type="number" class="form-control" id="aadhar" placeholder="enter your 12 digit aadhar no"
+                        aria-label="Username" aria-describedby="basic-addon1">
+
+                </div>
+                <div id="aerrormessage" class="form-text mb-3 text-danger">
+                </div>
+                <button class="btn btn-danger w-100" id="aadhar_btn">
+                    <i class="bi bi-send"></i> SEND OTP
+                </button>
+                <button class="btn btn-danger w-100 my-2" id="aadhar_loading_btn" style="display:none" disabled>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div> SEND OTP
+                </button>
+            </div>
+        </div>
+
+        <!-- enter otp-->
+        <div class="card col-md-5 mx-auto my-3 shadow-sm" style="display:none" id="enter_otp">
+            <div class="card-body">
+                <h5 class="my-3 text-center">Enter OTP Sended To Your Registered Mobile No</h5>
+                <div class="input-group ">
+                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-phone"></i></span>
+                    <input type="number" class="form-control" id="otp" placeholder="######" aria-label="Username"
+                        aria-describedby="basic-addon1">
+
+                </div>
+                <div id="oerrormessage" class="form-text mb-3 text-danger">
+                </div>
+                <button class="btn btn-primary w-100" id="otp_btn">
+                    <i class="bi bi-shield-check"></i> VERIFY OTP
+                </button>
+                <button class="btn btn-primary w-100 my-2" id="otp_loading_btn" style="display:none" disabled>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div> VERIFY OTP
+                </button>
+            </div>
+        </div>
+
+        <!-- aadhar detail-->
+        <div class="card col-md-5 mx-auto my-3 shadow-sm" style="display:none" id="aadhar_details">
+            <div class="card-body">
+                <h5>Aadhar Card Info</h5>
+                <div class="d-flex gap-3 border rounded p-2">
+                    <img id="dp" src="" width="85px" class="rounded">
+                    <div>
+
+                        <div class="fs-6"><b>Name :</b> <span id="fullname"></span></div>
+                        <div class="fs-6"><b>Gender :</b> <span id="gender"></span></div>
+                        <div class="fs-6"><b>DOB :</b> <span id="dob"></span></div>
+
+
+
+                    </div>
+                </div>
+
+                <div class=" border rounded p-2 mt-2">
+                    <div class="fw-bold fs-5">Address</div>
+                    <div id="address">
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100 mt-3" onclick="location.reload();">
+                    <i class="bi bi-shield-check"></i> VERIFY ANOTHER AADHAR CARD
+                </button>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        var ref_id = null;
+
+        $("#aadhar_btn").click(function () {
+            $("#aerrormessage").text('')
+            let aadhar_no = $("#aadhar").val();
+            if (!aadhar_no || aadhar_no > 999999999999 || aadhar_no < 100000000000) {
+                $("#aerrormessage").text('enter a valid aadhar card no')
+                return;
+            }
+
+            $(this).hide();
+            $("#aadhar_loading_btn").show();
+
+            $.ajax({
+                url: 'verify.php?sendotp',
+                dataType: 'json',
+                method: 'post',
+                data: {
+                    aadhar_no: aadhar_no
+                },
+                success: function (res) {
+
+                    if (res.code == 200) {
+
+                        if (!res.data.ref_id) {
+                            $("#aadhar_btn").show();
+                            $("#aadhar_loading_btn").hide();
+                            $("#aerrormessage").text(res.data.message)
+                        } else {
+                            ref_id = res.data.ref_id;
+
+                            $("#enter_aadhar").hide();
+                            $("#enter_otp").show();
+                        }
+
+                    } else {
+                        $("#aadhar_btn").show();
+                        $("#aadhar_loading_btn").hide();
+                        $("#aerrormessage").text(res.message)
+                    }
+                    console.log('success', res)
+                },
+                error: function (res) {
+                    console.log('error', res)
+
+                }
+            })
+
+        })
+
+
+        $("#otp_btn").click(function () {
+            $("#oerrormessage").text('')
+            let otp = $("#otp").val();
+            if (!otp || otp > 999999 || otp < 100000) {
+                $("#oerrormessage").text('enter a 6 digit otp')
+                return;
+            }
+
+            $(this).hide();
+            $("#otp_loading_btn").show();
+
+
+            $.ajax({
+                url: 'otp.php?verifyotp',
+                dataType: 'json',
+                method: 'post',
+                data: {
+                    otp: otp,
+                    ref_id: ref_id
+                },
+                success: function (res) {
+
+                    if (res.code == 200) {
+
+                        if (!res.data.ref_id) {
+                            $("#otp_btn").show();
+                            $("#otp_loading_btn").hide();
+                            $("#oerrormessage").text(res.data.message)
+                        } else {
+
+                            $("#fullname").text(res.data.name)
+                            $("#gender").text(res.data.gender)
+                            $("#dob").text(res.data.dob)
+                            $("#dp").attr('src', 'data:image/jpeg;base64,' + res.data.photo_link)
+                            $("#address").text(res.data.care_of + ' ' + res.data.split_address.house + ' ' + res.data.split_address.street + ' ' + res.data.split_address.state + ' ' + res.data.split_address.pincode)
+                            // Hide The Otp Ui
+                            $("#enter_otp").hide();
+                            $("#aadhar_details").show();
+
+                        }
+
+                    } else {
+                        $("#otp_btn").show();
+                        $("#otp_loading_btn").hide();
+                        $("#oerrormessage").text(res.message)
+                    }
+                    console.log('success', res)
+                },
+                error: function (res) {
+                    console.log('error', res)
+
+                }
+            })
+
+        })
+
+    </script>
+
+</body>
+
+</html>
