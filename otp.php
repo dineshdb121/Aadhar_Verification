@@ -1,6 +1,21 @@
 <?php
+
+// Token
+$ch = curl_init();
+$url = "https://www.devkng.com/kyc/token.php";
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$resp = curl_exec($ch);
+if($e = curl_error($ch)) {
+    echo $e;
+} else {
+    $data = json_decode($resp,true);
+    $access_token = $data['access_token'];
+}
+curl_close($ch);
+
 // Function to verify OTP
-function verifyOTP($otp, $ref_id) {
+function verifyOTP($otp, $ref_id, $access_token) {
     // API endpoint URL for OTP verification
     $url = 'https://api.sandbox.co.in/kyc/aadhaar/okyc/otp/verify';
 
@@ -12,10 +27,10 @@ function verifyOTP($otp, $ref_id) {
 
     // Request headers
     $headers = array(
-        'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJBUEkiLCJyZWZyZXIjoiZXlKaGJHY2lPaUpJVXpVeE1pSjkuZXlKaGRXUWlPaUpCVUVraUxDSnpkV0lpT2lKa2EzQnliMnBsWTNSek1USXhRR2R0WVdsc0xtTnZiU0lzSW1Gd2FWOXJaWGtpT2lKclpYbGZiR2wyWlY4MWJVeG5VVzUwZDJvNVVXNVhPVmh0VWxkak0xWnVOMWhDVUVveVFuRmpkeUlzSW1semN5STZJbUZ3YVM1ellXNWtZbTk0TG1OdkxtbHVJaXdpWlhod0lqb3hOelF4TURrMU1qRXdMQ0pwYm5SbGJuUWlPaUpTUlVaU1JWTklYMVJQUzBWT0lpd2lhV0YwSWpveE56QTVOVFU1TWpFd2ZRLlVrR1RPYlBMbm9VMjJPVW5KWmxfZXllZ3doTVp6d3p2YjdMVWRGMDhhbW1KMmZwT3h3cTFQMWppa1IyT3RfcnF6VXk4c2wyTUlZeGhJX2QzaUhwQ2NBIiwic3ViIjoiZGtwcm9qZWN0czEyMUBnbWFpbC5jb20iLCJhcGlfa2V5Ijoia2V5X2xpdmVfNW1MZ1FudHdqOVFuVzlYbVJXYzNWbjdYQlBKMkJxY3ciLCJpc3MiOiJhcGkuc2FuZGJveC5jby5pbiIsImV4cCI6MTcwOTY0NTYxMCwiaW50ZW50IjoiQUNDRVNTX1RPS0VOIiwiaWF0IjoxNzA5NTU5MjEwfQ.hnpBqoKAlNoswLGoQyFDcYSzB_ZeoTiqTjClXZhdTqbYsh5fYF4pSDWPhB6QkZcMBm8Ex3RIT6mzhPFGR6yRXQ',
+        'Authorization: ' . $access_token,
         'Accept: application/json',
         'Content-Type: application/json',
-        'x-api-key: key_live_5mLgQntwj9QnW9Xm7XBPJ2Bqcw', // Enter Your Api Key here
+        'x-api-key: key_live_5mLgQntwj9QnW9XmRWc3Vn7XBPJ2Bqcw', // Enter Your Api Key here
         'x-api-version: 1.0'
     );
 
@@ -50,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp']) && isset($_POS
     $ref_id = $_POST['ref_id'];
 
     // Verify OTP
-    $response = verifyOTP($otp, $ref_id);
+    $response = verifyOTP($otp, $ref_id, $access_token);
 
     // Output the response
     echo $response;

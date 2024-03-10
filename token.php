@@ -4,7 +4,7 @@
 $url='https://api.sandbox.co.in/authenticate';
 
 $headers[]='accept: application/json';
-$headers[]='x-api-key: key_live_5mLgQntwRWc3Vn7XBPJ2Bqcw'; // API key
+$headers[]='x-api-key: key_live_5mLgQn3Vn7XBPJ2Bqcw'; // API key
 $headers[]='x-api-version: 1.0';
 $headers[]='x-api-secret: secret_live_k39UIHmcDcyZ3iAjcnyeLBLheKTZqqGf'; // Secret Key
 

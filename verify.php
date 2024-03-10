@@ -1,12 +1,24 @@
 <?php
 
+// Token
+$ch = curl_init();
+$url = "https://www.devkng.com/kyc/token.php";
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$resp = curl_exec($ch);
+if($e = curl_error($ch)) {
+    echo $e;
+} else {
+    $data = json_decode($resp,true);
+    $access_token = $data['access_token'];
+}
+curl_close($ch);
 
+// Verify
 $headers[]='accept: application/json';
 $headers[]='x-api-key: key_live_5mLgQntwj9QnmRc3Vn7XBPJ2Bqcw';
 $headers[]='x-api-version: 1.0';
 
-
-$auth_token='eyJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJBUEkiLCJyZWZyHY2lPaUpJVXpVeE1pSjkuZXlKaGRXUWlPaUpCVUVraUxDSnpkV0lpT2lKa2EzQnliMnBsWTNSek1USXhRR2R0WVdsc0xtTnZiU0lzSW1Gd2FWOXJaWGtpT2lKclpYbGZiR2wyWlY4MWJVeG5VVzUwZDJvNVVXNVhPVmh0VWxkak0xWnVOMWhDVUVveVFuRmpkeUlzSW1semN5STZJbUZ3YVM1ellXNWtZbTk0TG1OdkxtbHVJaXdpWlhod0lqb3hOelF4TURrMU1qRXdMQ0pwYm5SbGJuUWlPaUpTUlVaU1JWTklYMVJQUzBWT0lpd2lhV0YwSWpveE56QTVOVFU1TWpFd2ZRLlVrR1RPYlBMbm9VMjJPVW5KWmxfZXllZ3doTVp6d3p2YjdMVWRGMDhhbW1KMmZwT3h3cTFQMWppa1IyT3RfcnF6VXk4c2wyTUlZeGhJX2QzaUhwQ2NBIiwic3ViIjoiZGtwcm9qZWN0czEyMUBnbWFpbC5jb20iLCJhcGlfa2V5Ijoia2V5X2xpdmVfNW1MZ1FudHdqOVFuVzlYbVJXYzNWbjdYQlBKMkJxY3ciLCJpc3MiOiJhcGkuc2FuZGJveC5jby5pbiIsImV4cCI6MTcwOTY0NTYxMCwiaW50ZW50IjoiQUNDRVNTX1RPS0VOIiwiaWF0IjoxNzA5NTU5MjEwfQ.hnpBqoKAlNoswLGoQyFDcYSzB_ZeoTiqTjClXZhdTqbYsh5fYF4pSDWPhB6QkZcMBm8Ex3RIT6mzhPFGR6yRXQ';
 
 
 // Check if the 'aadhar_no' parameter is set in the POST request
@@ -24,10 +36,10 @@ if(isset($_POST['aadhar_no'])) {
 
     // Request headers
     $headers = array(
-        'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJBUEkiLCJyZWZyZXNoX3Rva2oiZXlKaGJHY2lPaUpJVXpVeE1pSjkuZXlKaGRXUWlPaUpCVUVraUxDSnpkV0lpT2lKa2EzQnliMnBsWTNSek1USXhRR2R0WVdsc0xtTnZiU0lzSW1Gd2FWOXJaWGtpT2lKclpYbGZiR2wyWlY4MWJVeG5VVzUwZDJvNVVXNVhPVmh0VWxkak0xWnVOMWhDVUVveVFuRmpkeUlzSW1semN5STZJbUZ3YVM1ellXNWtZbTk0TG1OdkxtbHVJaXdpWlhod0lqb3hOelF4TURnek1EQTJMQ0pwYm5SbGJuUWlPaUpTUlVaU1JWTklYMVJQUzBWT0lpd2lhV0YwSWpveE56QTVOVFEzTURBMmZRLlBHZnhieFVZQkd1UGhUcGNkYm00Z2lORHpiRXFjSy1oZHdiMW4wSWMyekRzM2hSSVQ0cVhXRjhpSjhCb3BEc3YteVRIVS01Z1lxUWFUVnFOUHFINFFBIiwic3ViIjoiZGtwcm9qZWN0czEyMUBnbWFpbC5jb20iLCJhcGlfa2V5Ijoia2V5X2xpdmVfNW1MZ1FudHdqOVFuVzlYbVJXYzNWbjdYQlBKMkJxY3ciLCJpc3MiOiJhcGkuc2FuZGJveC5jby5pbiIsImV4cCI6MTcwOTYzMzQwNiwiaW50ZW50IjoiQUNDRVNTX1RPS0VOIiwiaWF0IjoxNzA5NTQ3MDA2fQ.p-bTGsI0hgY16fok1QDdYdu6Yg2ErFCoXktUqCdR6Y64w8Fx5niTAi-kbyEZbOXGRJvuWIl83TssZFxaRzeTRQ',
+        'Authorization: ' . $access_token, 
         'Accept: application/json',
         'Content-Type: application/json',
-        'x-api-key: key_live_5mLgQntwj9QnW9XmRn7XBPJ2Bqcw',
+        'x-api-key: key_live_5mLgQntwj9QnW9XmRWc3Vn7XBPJ2Bqcw',
         'x-api-version: 1.0'
     );
 
@@ -57,9 +69,5 @@ if(isset($_POST['aadhar_no'])) {
 } else {
     // If 'aadhar_no' parameter is not set, return an error message
     echo "Error: 'aadhar_no' parameter is not set.";
-
-
 }
-
-
 ?>
